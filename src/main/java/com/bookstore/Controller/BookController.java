@@ -19,11 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bookstore.Exception.ResourceNotFoundException;
 import com.bookstore.Repository.BookRepository;
-import com.bookstore.model.Book;
+import com.bookstore.entities.Book;
 
 @RequestMapping("/api/")
 @RestController
-public class Controller {
+public class BookController {
 	@Autowired
 	private BookRepository bookRepository;
 
@@ -69,7 +69,7 @@ public class Controller {
 	// delete book
 
 	@DeleteMapping("books/{id}")
-	public Map<String, Boolean> deleteEmployee(@Valid @PathVariable(value = "id") Integer bookId)
+	public Map<String, Boolean> deleteBook(@Valid @PathVariable(value = "id") Integer bookId)
 			throws ResourceNotFoundException {
 		Book book = bookRepository.findById(bookId)
 				.orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + bookId));
@@ -79,4 +79,5 @@ public class Controller {
 		response.put("deleted", Boolean.TRUE);
 		return response;
 	}
+
 }
