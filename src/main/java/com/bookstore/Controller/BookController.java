@@ -1,83 +1,75 @@
 package com.bookstore.Controller;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bookstore.Exception.ResourceNotFoundException;
-import com.bookstore.Repository.BookRepository;
 import com.bookstore.entities.Book;
+import com.bookstore.service.BookService;
 
-@RequestMapping("/api/")
 @RestController
 public class BookController {
+
 	@Autowired
-	private BookRepository bookRepository;
+	BookService bookService;
 
-	// display all books
-	@GetMapping("books")
-	public List<Book> getAllBooks() {
-		return bookRepository.findAll();
+	@GetMapping("/book")
+	public Page<Book> findAll(@RequestParam(value = "page", defaultValue = "1") Integer page,
+			@RequestParam(value = "size", defaultValue = "3") Integer size) {
+		PageRequest request = PageRequest.of(page - 1, size);
+		return bookService.findAll(request);
 	}
 
-	// adding a new book
-	@PostMapping("add")
-	public Book createBook(@RequestBody Book book) {
-		return bookRepository.save(book);
+	@GetMapping("/book/{bookId}")
+	public Book showOne(@PathVariable("bookId") Integer bookId) {
+		Optional<Book> book = bookService.findOne(bookId);
 
+		return book.get();
 	}
 
-	// get book by id
-	@GetMapping("books/{id}")
-
-	public ResponseEntity<Book> getBookById(@PathVariable(value = "id") int bookId) throws ResourceNotFoundException {
-		Book book = bookRepository.findById(bookId)
-				.orElseThrow(() -> new ResourceNotFoundException("No Book with this ID : " + bookId));
-		return ResponseEntity.ok().body(book);
+	@PostMapping("/seller/book/new")
+	public ResponseEntity create(@Valid @RequestBody Optional<Book> book, BindingResult bindingResult) {
+		Optional<Book> bookIdExists = bookService.findOne(book.get().getId());
+		if (bookIdExists != null) {
+			bindingResult.rejectValue("bookId", "error.book", "There is already a book with the code provided");
+		}
+		if (bindingResult.hasErrors()) {
+			return ResponseEntity.badRequest().body(bindingResult);
+		}
+		return ResponseEntity.ok(bookService.save(book));
 	}
 
-	// update book
-	@PutMapping("books/{id}")
-	public ResponseEntity<Book> updateBook(@PathVariable(value = "id") Integer bookId,
-			@Valid @RequestBody Book bookDetails) throws ResourceNotFoundException {
-		Book book = bookRepository.findById(bookId)
-				.orElseThrow(() -> new ResourceNotFoundException("No Book with this ID : " + bookId));
+	@PutMapping("/seller/book/{id}/edit")
+	public ResponseEntity edit(@PathVariable("id") Integer bookId, @Valid @RequestBody Book book,
+			BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			return ResponseEntity.badRequest().body(bindingResult);
+		}
+		if (!bookId.equals(book.getId())) {
+			return ResponseEntity.badRequest().body("Id Not Matched");
+		}
 
-		book.setAuthor(bookDetails.getAuthor());
-
-		book.setTitle(bookDetails.getTitle());
-
-		book.setPrice(bookDetails.getPrice());
-		book.setReleaseD(bookDetails.getReleaseD());
-		final Book updateBook = bookRepository.save(book);
-		return ResponseEntity.ok(updateBook);
+		return ResponseEntity.ok(bookService.update(book));
 	}
 
-	// delete book
-
-	@DeleteMapping("books/{id}")
-	public Map<String, Boolean> deleteBook(@Valid @PathVariable(value = "id") Integer bookId)
-			throws ResourceNotFoundException {
-		Book book = bookRepository.findById(bookId)
-				.orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + bookId));
-
-		bookRepository.delete(book);
-		Map<String, Boolean> response = new HashMap<>();
-		response.put("deleted", Boolean.TRUE);
-		return response;
+	@DeleteMapping("/seller/book/{id}/delete")
+	public ResponseEntity delete(@PathVariable("id") Integer bookId) {
+		bookService.delete(bookId);
+		return ResponseEntity.ok().build();
 	}
 
 }

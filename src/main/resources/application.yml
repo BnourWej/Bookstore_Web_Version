@@ -1,0 +1,35 @@
+## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: 
+    url: jdbc:mysql://localhost/bookstore?serverTimezone=UTC
+    platform: mysql
+    initialization-mode: always
+    continue-on-error: true
+  jpa:
+    show-sql: true
+   #generate-ddl: false
+    hibernate:
+      ddl-auto: create
+    database: mysql
+    properties:
+      hibernate:
+        temp:
+          use_jdbc_metadata_defaults: false;
+    database-platform:  org.hibernate.dialect.MySQL5Dialect
+
+
+
+
+  queries:
+    users-query: select email, password, active from users where email=?
+    roles-query: select email, role from users where email=?
+  server:
+  servlet:
+    contextPath: /api
+jwt:
+  header: Authorization
+  jwtSecret: wejdene
+  jwtExpiration: 86400
