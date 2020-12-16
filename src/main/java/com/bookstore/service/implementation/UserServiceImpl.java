@@ -1,7 +1,5 @@
 package com.bookstore.service.implementation;
 
-import java.util.Collection;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,11 +23,6 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User findOne(String email) {
 		return userRepository.findByEmail(email);
-	}
-
-	@Override
-	public Collection<User> findByRole(String role) {
-		return userRepository.findAllByRole(role);
 	}
 
 	@Override

@@ -45,9 +45,6 @@ public class User implements Serializable {
 	private String address;
 	@NotNull
 	private boolean active;
-	@NotEmpty
-	private String role = "ROLE_CUSTOMER";
-
 	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonIgnore
 	private Cart cart;
@@ -55,7 +52,7 @@ public class User implements Serializable {
 	@Override
 	public String toString() {
 		return "User{" + "id=" + id + ", email='" + email + '\'' + ", password='" + password + '\'' + ", name='" + name
-				+ '\'' + ", phone='" + phone + '\'' + ", address='" + address + '\'' + ", active=" + active + ", role='"
-				+ role + '\'' + '}';
+				+ '\'' + ", phone='" + phone + '\'' + ", address='" + address + '\'' + ", active=" + active
+				+ ", role='";
 	}
 }

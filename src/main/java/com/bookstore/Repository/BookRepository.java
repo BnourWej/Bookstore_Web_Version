@@ -16,9 +16,6 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
 
 	// Onsale book
 
-	// rerourner le nombre de stocke des livres
-	// retourner le
-
 	Page<Book> findAllByBookStatusOrderByIdAsc(Integer bookStatus, Pageable pageable);
 
 	Page<Book> findAllByOrderById(Pageable pageable);
