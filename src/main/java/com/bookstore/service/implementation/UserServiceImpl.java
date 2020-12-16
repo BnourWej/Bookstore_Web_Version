@@ -3,8 +3,6 @@ package com.bookstore.service.implementation;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +15,8 @@ import com.bookstore.enums.ResultEnum;
 import com.bookstore.service.UserService;
 
 @Service
-@DependsOn("passwordEncoder")
 public class UserServiceImpl implements UserService {
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+
 	@Autowired
 	UserRepository userRepository;
 	@Autowired
@@ -40,7 +36,6 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public User save(User user) {
 		// register
-		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		try {
 			User savedUser = userRepository.save(user);
 
@@ -59,7 +54,6 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public User update(User user) {
 		User oldUser = userRepository.findByEmail(user.getEmail());
-		oldUser.setPassword(passwordEncoder.encode(user.getPassword()));
 		oldUser.setName(user.getName());
 		oldUser.setPhone(user.getPhone());
 		oldUser.setAddress(user.getAddress());
