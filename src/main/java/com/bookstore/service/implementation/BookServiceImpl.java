@@ -1,11 +1,10 @@
 
 package com.bookstore.service.implementation;
 
-import java.util.Optional;
+import java.awt.print.Pageable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +21,9 @@ public class BookServiceImpl implements BookService {
 	BookRepository bookRepository;
 
 	@Override
-	public Optional<Book> findOne(Integer bookId) {
-		Optional<Book> book = bookRepository.findById(bookId);
-		return book;
+	public Book findOne(Integer bookId) {
+
+		return bookRepository.findById(bookId);
 	}
 
 	@Override
@@ -40,52 +39,52 @@ public class BookServiceImpl implements BookService {
 	@Override
 	@Transactional
 	public void increaseStock(Integer bookId, int amount) {
-		Optional<Book> book = findOne(bookId);
-		if (book.isPresent())
+		Book book = findOne(bookId);
+		if (book != null)
 			throw new MyException(ResultEnum.BOOK_NOT_EXIST);
-		int update = book.get().getStock() + amount;
-		book.get().setStock(update);
-		bookRepository.save(book.get());
+		int update = book.getStock() + amount;
+		book.setStock(update);
+		bookRepository.save(book);
 	}
 
 	@Override
 	@Transactional
 	public void decreaseStock(Integer bookId, int amount) {
-		Optional<Book> book = findOne(bookId);
-		if (book.isPresent())
+		Book book = findOne(bookId);
+		if (book != null)
 			throw new MyException(ResultEnum.BOOK_NOT_EXIST);
-		int update = book.get().getStock() - amount;
+		int update = book.getStock() - amount;
 		if (update <= 0)
 			throw new MyException(ResultEnum.BOOK_NOT_ENOUGH);
-		book.get().setStock(update);
-		bookRepository.save(book.get());
+		book.setStock(update);
+		bookRepository.save(book);
 	}
 
 	@Override
 	@Transactional
 	public Book offSale(Integer bookId) {
-		Optional<Book> book = findOne(bookId);
+		Book book = findOne(bookId);
 		if (book == null)
 			throw new MyException(ResultEnum.BOOK_NOT_EXIST);
-		if (book.get().getBookStatus() == BookStatusEnum.DOWN.getCode()) {
+		if (book.getBookStatus() == BookStatusEnum.DOWN.getCode()) {
 			throw new MyException(ResultEnum.BOOK_STATUS_ERROR);
 		}
-		book.get().setBookStatus(BookStatusEnum.DOWN.getCode());
-		return bookRepository.save(book.get());
+		book.setBookStatus(BookStatusEnum.DOWN.getCode());
+		return bookRepository.save(book);
 	}
 
 	@Override
 	@Transactional
 	public Book onSale(Integer bookId) {
-		Optional<Book> book = findOne(bookId);
-		if (book.isPresent())
+		Book book = findOne(bookId);
+		if (book != null)
 			throw new MyException(ResultEnum.BOOK_NOT_EXIST);
-		if (book.get().getBookStatus() == BookStatusEnum.UP.getCode()) {
+		if (book.getBookStatus() == BookStatusEnum.UP.getCode()) {
 			throw new MyException(ResultEnum.BOOK_STATUS_ERROR);
 		}
 
-		book.get().setBookStatus(BookStatusEnum.UP.getCode());
-		return bookRepository.save(book.get());
+		book.setBookStatus(BookStatusEnum.UP.getCode());
+		return bookRepository.save(book);
 	}
 
 	@Override
@@ -98,16 +97,19 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
-	public Book save(Optional<Book> book) {
-		return update(book.get());
+	public Book save(Book book) {
+		return update(book);
 	}
 
 	@Override
 	public void delete(Integer bookId) {
-		Optional<Book> book = findOne(bookId);
-		if (book == null)
+		Book book = findOne(bookId);
+		if (book == null) {
+			System.out.println("BOOK NOT FOUND !");
 			throw new MyException(ResultEnum.BOOK_NOT_EXIST);
-		bookRepository.delete(book.get());
+		}
+
+		bookRepository.delete(book);
 	}
 
 }

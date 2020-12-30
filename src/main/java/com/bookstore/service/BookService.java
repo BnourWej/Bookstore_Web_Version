@@ -1,19 +1,18 @@
 package com.bookstore.service;
 
-import java.util.Optional;
+import java.awt.print.Pageable;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import com.bookstore.entities.Book;
 
 public interface BookService {
-	Optional<Book> findOne(Integer integer);
+	Book findOne(Integer integer);
 
 	// All selling books
 	Page<Book> findUpAll(Pageable pageable);
 
-	// All products
+	// All books
 	Page<Book> findAll(Pageable pageable);
 
 	// increase stock
@@ -28,7 +27,7 @@ public interface BookService {
 
 	Book update(Book book);
 
-	Book save(Optional<Book> book);
+	Book save(Book book);
 
 	void delete(Integer id);
 

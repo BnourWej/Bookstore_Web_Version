@@ -1,7 +1,6 @@
 package com.bookstore.entities;
 
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -37,12 +36,12 @@ public class BookInOrder {
 	@JoinColumn(name = "order_id")
 	@JsonIgnore
 	private OrderMain orderMain;
-
 	@NotEmpty
 	private Integer bookId;
 
 	@Min(0)
 	private Integer bookStock;
+	// private String BookIcon;
 
 	private String BookTitle;
 	@NotNull
@@ -51,11 +50,11 @@ public class BookInOrder {
 	@Min(1)
 	private Integer count;
 
-	public BookInOrder(Optional<Book> book, Integer quantity) {
-		this.bookId = book.get().getId();
-		this.BookTitle = book.get().getTitle();
-		this.bookPrice = book.get().getPrice();
-		this.bookStock = book.get().getStock();
+	public BookInOrder(Book book, Integer quantity) {
+		this.bookId = book.getId();
+		this.BookTitle = book.getTitle();
+		this.bookPrice = book.getPrice();
+		this.bookStock = book.getStock();
 		this.count = quantity;
 	}
 

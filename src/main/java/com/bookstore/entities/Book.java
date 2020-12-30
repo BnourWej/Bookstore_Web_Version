@@ -19,9 +19,10 @@ import lombok.Data;
 @Entity
 @Table(name = "book")
 public class Book implements Serializable {
-	/**
-	 * 
-	 */
+	public Book(int i) {
+		this.id = i;
+	}
+
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -45,4 +46,31 @@ public class Book implements Serializable {
 
 	@ColumnDefault("0")
 	private Integer bookStatus;
+
+	public Book() {
+		super();
+	}
+
+	public Book(String author, String title, double price, String releaseD, int stock, Integer bookStatus) {
+		super();
+
+		this.author = author;
+		this.title = title;
+		this.price = price;
+		this.releaseD = releaseD;
+		this.stock = stock;
+		this.bookStatus = bookStatus;
+	}
+
+	public Book(int id, String author, String title, double price, String releaseD, int stock, Integer bookStatus) {
+		super();
+		this.id = id;
+		this.author = author;
+		this.title = title;
+		this.price = price;
+		this.releaseD = releaseD;
+		this.stock = stock;
+		this.bookStatus = bookStatus;
+	}
+
 }

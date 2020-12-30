@@ -1,7 +1,5 @@
 package com.bookstore.service.implementation;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -91,8 +89,8 @@ public class OrderServiceImpl implements OrderService {
 		// Restore Stock
 		Iterable<BookInOrder> books = orderMain.getBooks();
 		for (BookInOrder bookInOrder : books) {
-			Optional<Book> book = bookRepository.findById(bookInOrder.getBookId());
-			if (book.isPresent()) {
+			Book book = bookRepository.findById(bookInOrder.getBookId());
+			if (book != null) {
 				bookService.increaseStock(bookInOrder.getBookId(), bookInOrder.getCount());
 			}
 		}
